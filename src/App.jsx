@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxEExU0IOxVnoOb1NFEnKutHbEV56RchY_ppN5aFDAEnT59ZMVJOBj7BICeYwWlom4bZw/exec";
+  "https://script.google.com/macros/s/AKfycbyk9oTwc8eAHRsJEFx1YStCf7TLH-Ub97odrqovpLD9eNhJmy5RZYASgqEkOYxGm73vKA/exec";
 
 const GST_PERCENT = 18;
 
@@ -109,6 +109,7 @@ export default function App() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
 
   const [clientOptions, setClientOptions] = useState([]);
   const [projectOptions, setProjectOptions] = useState([]);
@@ -216,7 +217,34 @@ const calculations = useMemo(() => {
       setSaving(false);
     }
   };
+const generateQuotationPdf = async () => {
+  if (!form.quotationNumber) {
+    setStatus("Please save the quotation first before generating PDF.");
+    return;
+  }
 
+  try {
+    setPdfGenerating(true);
+    setStatus("Generating quotation PDF...");
+
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=generateQuotationPdf&quotationNumber=${encodeURIComponent(form.quotationNumber)}`
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to generate PDF");
+    }
+
+    setStatus("Quotation PDF generated successfully.");
+    window.open(result.pdfUrl, "_blank");
+  } catch (error) {
+    setStatus(`Could not generate quotation PDF. ${error.message}`);
+  } finally {
+    setPdfGenerating(false);
+  }
+};
   const fetchClients = async () => {
     try {
       setSearchLoading(true);
@@ -630,7 +658,13 @@ const calculations = useMemo(() => {
             <button className="btn btn-primary full-btn" onClick={saveToGoogleSheet} disabled={saving}>
               {saving ? "Saving..." : "Save Non-Cost Data to Sheet"}
             </button>
-
+            <button
+  className="btn btn-secondary full-btn"
+  onClick={generateQuotationPdf}
+  disabled={pdfGenerating || !form.quotationNumber}
+>
+  {pdfGenerating ? "Generating PDF..." : "Generate Quotation PDF"}
+</button>
             <div className="info-box">
               Quotation number will be generated only when you save.
             </div>
