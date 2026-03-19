@@ -119,18 +119,52 @@ export default function App() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [clientsLoaded, setClientsLoaded] = useState(false);
 
-  const calculations = useMemo(() => {
-    const area = Number(form.containerLength || 0) * 10;
-    const gst = Number(form.priceBeforeGst || 0) * (GST_PERCENT / 100);
-    const finalPrice = Number(form.priceBeforeGst || 0) + gst;
+const calculations = useMemo(() => {
+  const area = Number(form.containerLength || 0) * 10;
 
-    return {
-      area,
-      gst,
-      finalPrice,
-    };
-  }, [form]);
+  const steelCost = area * 190;
+  const sheetMetalCost = area * 231;
+  const flooringCost = area * 90;
+  const electricalCost = area * 100;
+  const paintingCost = area * 60;
+  const doorCost = Number(form.doors || 0) * 6000;
+  const windowCost = Number(form.windows || 0) * 3500;
+  const partitionCost = Number(form.partitions || 0) * 10000;
+  const laborCost = area * 100;
+  const transportCost = Number(form.distanceToSite || 0) * 120;
+  const toiletCost = form.toiletUnit ? 20000 : 0;
+  const insulationCost = form.insulation ? area * 155 : 0;
+  const glassDoorCost = form.glassDoor ? 12000 : 0;
+  const aluminiumWindowCost = form.aluminiumWindow ? 0 : 0;
+  const falseCeilingCost = form.falseCeiling ? area * 110 : 0;
 
+  const calculatedCost =
+    steelCost +
+    sheetMetalCost +
+    flooringCost +
+    electricalCost +
+    paintingCost +
+    doorCost +
+    windowCost +
+    partitionCost +
+    laborCost +
+    transportCost +
+    toiletCost +
+    insulationCost +
+    glassDoorCost +
+    aluminiumWindowCost +
+    falseCeilingCost;
+
+  const gst = Number(form.priceBeforeGst || 0) * (GST_PERCENT / 100);
+  const finalPrice = Number(form.priceBeforeGst || 0) + gst;
+
+  return {
+    area,
+    calculatedCost,
+    gst,
+    finalPrice,
+  };
+}, [form]);
   const payload = useMemo(() => buildPayload(form, calculations), [form, calculations]);
 
   const resetForm = () => {
@@ -564,31 +598,35 @@ export default function App() {
           <section className="card preview-card">
             <h2 className="preview-title">Quotation Preview</h2>
 
-            <div className="preview-grid">
-              <DetailBox label="Client" value={form.clientName || "—"} />
-              <DetailBox label="Project" value={form.projectLocation || "—"} />
-              <DetailBox label="Container Size" value={`${form.containerLength} x 10 x 10 ft`} />
-              <DetailBox label="Floor Area" value={`${calculations.area} sqft`} />
-              <DetailBox label="GST" value={formatINR(calculations.gst)} />
-              <DetailBox label="Final Quote" value={formatINR(calculations.finalPrice)} />
-            </div>
+           <div className="preview-grid">
+  <DetailBox label="Client" value={form.clientName || "—"} />
+  <DetailBox label="Project" value={form.projectLocation || "—"} />
+  <DetailBox label="Container Size" value={`${form.containerLength} x 10 x 10 ft`} />
+  <DetailBox label="Floor Area" value={`${calculations.area} sqft`} />
+  <DetailBox label="Calculated Cost" value={formatINR(calculations.calculatedCost)} />
+  <DetailBox label="GST" value={formatINR(calculations.gst)} />
+  <DetailBox label="Final Quote" value={formatINR(calculations.finalPrice)} />
+</div>
 
-            <div className="price-card">
-              <div className="price-row">
-                <span>Entered Price Before GST</span>
-                <strong>{formatINR(form.priceBeforeGst)}</strong>
-              </div>
-              <div className="price-row">
-                <span>GST ({GST_PERCENT}%)</span>
-                <strong>{formatINR(calculations.gst)}</strong>
-              </div>
-              <div className="divider small" />
-              <div className="price-row total">
-                <span>Final Price</span>
-                <strong>{formatINR(calculations.finalPrice)}</strong>
-              </div>
-            </div>
-
+           <div className="price-card">
+  <div className="price-row">
+    <span>Calculated Cost</span>
+    <strong>{formatINR(calculations.calculatedCost)}</strong>
+  </div>
+  <div className="price-row">
+    <span>Entered Price Before GST</span>
+    <strong>{formatINR(form.priceBeforeGst)}</strong>
+  </div>
+  <div className="price-row">
+    <span>GST ({GST_PERCENT}%)</span>
+    <strong>{formatINR(calculations.gst)}</strong>
+  </div>
+  <div className="divider small" />
+  <div className="price-row total">
+    <span>Final Price</span>
+    <strong>{formatINR(calculations.finalPrice)}</strong>
+  </div>
+</div>
             <button className="btn btn-primary full-btn" onClick={saveToGoogleSheet} disabled={saving}>
               {saving ? "Saving..." : "Save Non-Cost Data to Sheet"}
             </button>
