@@ -18,21 +18,21 @@ const initialForm = {
   contactNumber: "",
   email: "",
   notes: "",
-  containerLength: 40,
-  containerWidth: 10,
-  containerHeight: 10,
-  distanceToSite: 500,
+  containerLength: 0,
+  containerWidth: 0,
+  containerHeight: 0,
+  distanceToSite: 0,
   partitions: 1,
-  doors: 1,
-  windows: 2,
+  doors: 0,
+  windows: 0,
   bed: 0,
   bunkBed: 0,
   workstation: 0,
   priceBeforeGst: 0,
   advancePaymentPercentage: 0,
-  acProvision: true,
-  toiletUnit: true,
-  insulation: true,
+  acProvision: false,
+  toiletUnit: false,
+  insulation: false,
   glassDoor: false,
   falseCeiling: false,
   managerialTable: false,
@@ -658,7 +658,7 @@ export default function App() {
             <div className="section-header">
               <h2>Quotation Inputs</h2>
               <button className="btn btn-secondary" onClick={resetForm}>
-                Reset
+                + New
               </button>
             </div>
 
