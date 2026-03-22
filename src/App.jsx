@@ -628,13 +628,13 @@ export default function App() {
               </button>
             </div>
 
-            <div className="field">
-              <label className="field-label">Product Type</label>
-              <select
-                className="input"
-                value={form.productType}
-                onChange={(e) => setForm({ ...form, productType: e.target.value })}
-              >
+           <div className="field product-type-field">
+          <label className="field-label">Product Type</label>
+          <select
+          className="input"
+          value={form.productType}
+          onChange={(e) => setForm({ ...form, productType: e.target.value })}
+          >
                 <option value="">Select Product Type</option>
                 <option value="Casa UNO">Casa UNO</option>
                 <option value="Casa DUO">Casa DUO</option>
