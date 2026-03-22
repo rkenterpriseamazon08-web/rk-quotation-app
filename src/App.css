@@ -184,7 +184,23 @@ select {
   color: #111827;
   outline: none;
 }
+.percentage-input-wrap {
+  position: relative;
+}
 
+.percentage-input-wrap .input {
+  padding-right: 36px;
+}
+
+.percentage-symbol {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-weight: 600;
+  pointer-events: none;
+}
 .input:focus,
 .textarea:focus,
 select:focus {
