@@ -34,7 +34,6 @@ const initialForm = {
   toiletUnit: true,
   insulation: true,
   glassDoor: false,
-  aluminiumWindow: true,
   falseCeiling: false,
   managerialTable: false,
   conferenceTable: false,
@@ -71,7 +70,6 @@ function buildPayload(form, calculations) {
     containerLength: safeNumber(form.containerLength),
     containerWidth: safeNumber(form.containerWidth),
     containerHeight: safeNumber(form.containerHeight),
-    priceBeforeGst: safeNumber(form.priceBeforeGst),
     distanceToSite: safeNumber(form.distanceToSite),
     partitions: safeNumber(form.partitions),
     doors: safeNumber(form.doors),
@@ -79,6 +77,9 @@ function buildPayload(form, calculations) {
     bed: safeNumber(form.bed),
     bunkBed: safeNumber(form.bunkBed),
     workstation: safeNumber(form.workstation),
+    priceBeforeGst: safeNumber(form.priceBeforeGst),
+    enteredPriceBeforeGst: safeNumber(form.priceBeforeGst),
+    advancePaymentPercentage: safeNumber(form.advancePaymentPercentage),
     acProvision: form.acProvision ? "Yes" : "No",
     toiletUnit: form.toiletUnit ? "Yes" : "No",
     insulation: form.insulation ? "Yes" : "No",
@@ -89,16 +90,14 @@ function buildPayload(form, calculations) {
     overheadFileCabinet: form.overheadFileCabinet ? "Yes" : "No",
     epoxyFlooring: form.epoxyFlooring ? "Yes" : "No",
     calculatedCost: Math.round(calculations.calculatedCost),
-    enteredPriceBeforeGst: safeNumber(form.priceBeforeGst),
     bedCost: Math.round(calculations.bedCost),
     bunkBedCost: Math.round(calculations.bunkBedCost),
     workstationCost: Math.round(calculations.workstationCost),
     epoxyFlooringCost: Math.round(calculations.epoxyFlooringCost),
     gst18Percent: Math.round(calculations.gst),
     finalPrice: Math.round(calculations.finalPrice),
-    advancePaymentPercentage: Math.round(calculations. advancePaymentPercentage),
-    advancePaymentValue: Math.round(calculations. advancePaymentValue),
-    balancePayment: Math.round(calculations. balancePayment),
+    advancePaymentValue: Math.round(calculations.advancePaymentValue),
+    balancePayment: Math.round(calculations.balancePayment),
   };
 }
 
@@ -159,27 +158,26 @@ export default function App() {
 
   const calculations = useMemo(() => {
     const area =
-      safeNumber(form.containerLength || 0) * safeNumber(form.containerWidth || 0);
+      safeNumber(form.containerLength) * safeNumber(form.containerWidth);
 
     const steelCost = area * 190;
     const sheetMetalCost = area * 231;
     const flooringCost = area * 90;
     const electricalCost = area * 100;
     const paintingCost = area * 60;
-    const doorCost = safeNumber(form.doors || 0) * 6000;
-    const windowCost = safeNumber(form.windows || 0) * 3500;
-    const partitionCost = safeNumber(form.partitions || 0) * 10000;
+    const doorCost = safeNumber(form.doors) * 6000;
+    const windowCost = safeNumber(form.windows) * 3500;
+    const partitionCost = safeNumber(form.partitions) * 10000;
     const laborCost = area * 100;
-    const transportCost = safeNumber(form.distanceToSite || 0) * 120;
+    const transportCost = safeNumber(form.distanceToSite) * 120;
     const toiletCost = form.toiletUnit ? 20000 : 0;
     const insulationCost = form.insulation ? area * 155 : 0;
     const glassDoorCost = form.glassDoor ? 12000 : 0;
-    const aluminiumWindowCost = 0;
     const falseCeilingCost = form.falseCeiling ? area * 110 : 0;
 
-    const bedCost = safeNumber(form.bed || 0) * 3500;
-    const bunkBedCost = safeNumber(form.bunkBed || 0) * 9000;
-    const workstationCost = safeNumber(form.workstation || 0) * 4000;
+    const bedCost = safeNumber(form.bed) * 3500;
+    const bunkBedCost = safeNumber(form.bunkBed) * 9000;
+    const workstationCost = safeNumber(form.workstation) * 4000;
     const managerialTableCost = form.managerialTable ? 7000 : 0;
     const conferenceTableCost = form.conferenceTable ? 12000 : 0;
     const overheadFileCabinetCost = form.overheadFileCabinet ? 4000 : 0;
@@ -199,7 +197,6 @@ export default function App() {
       toiletCost +
       insulationCost +
       glassDoorCost +
-      aluminiumWindowCost +
       falseCeilingCost +
       bedCost +
       bunkBedCost +
@@ -209,9 +206,10 @@ export default function App() {
       overheadFileCabinetCost +
       epoxyFlooringCost;
 
-    const gst = safeNumber(form.priceBeforeGst || 0) * (GST_PERCENT / 100);
-    const finalPrice = safeNumber(form.priceBeforeGst || 0) + gst;
-    const advancePaymentValue = finalPrice * advancePaymentPercentage / 100;
+    const gst = safeNumber(form.priceBeforeGst) * (GST_PERCENT / 100);
+    const finalPrice = safeNumber(form.priceBeforeGst) + gst;
+    const advancePaymentValue =
+      finalPrice * (safeNumber(form.advancePaymentPercentage) / 100);
     const balancePayment = finalPrice - advancePaymentValue;
 
     return {
@@ -229,7 +227,6 @@ export default function App() {
       toiletCost,
       insulationCost,
       glassDoorCost,
-      aluminiumWindowCost,
       falseCeilingCost,
       bedCost,
       bunkBedCost,
@@ -241,6 +238,8 @@ export default function App() {
       calculatedCost,
       gst,
       finalPrice,
+      advancePaymentValue,
+      balancePayment,
     };
   }, [form]);
 
@@ -506,9 +505,7 @@ export default function App() {
                 <div className="record-header">
                   <div>
                     <h2 className="record-title">{record.clientName || "Customer Record"}</h2>
-                    <div className="record-subtitle">
-                      {record.address || record.projectLocation || "—"}
-                    </div>
+                    <div className="record-subtitle">{record.address || "—"}</div>
                   </div>
                   <div className="quote-pill">
                     <span className="quote-pill-label">Quotation Number</span>
@@ -522,7 +519,7 @@ export default function App() {
                   <DetailBox label="Client Name" value={record.clientName} />
                   <DetailBox label="Company Name" value={record.companyName} />
                   <DetailBox label="Company GST" value={record.companyGST} />
-                  <DetailBox label="Address" value={record.address || record.projectLocation} />
+                  <DetailBox label="Address" value={record.address} />
                   <DetailBox label="Pin Code" value={record.pinCode} />
                   <DetailBox label="Contact Number" value={record.contactNumber} />
                   <DetailBox label="Email" value={record.email} />
@@ -537,8 +534,16 @@ export default function App() {
                     value={record.calculatedCost ? formatINR(record.calculatedCost) : "—"}
                   />
                   <DetailBox
-                    label="Final Quoted Price"
-                    value={record.finalQuotedPrice ? formatINR(record.finalQuotedPrice) : "—"}
+                    label="Final Price"
+                    value={record.finalPrice ? formatINR(record.finalPrice) : "—"}
+                  />
+                  <DetailBox
+                    label="Advance Payment"
+                    value={record.advancePaymentValue ? formatINR(record.advancePaymentValue) : "—"}
+                  />
+                  <DetailBox
+                    label="Balance Payment"
+                    value={record.balancePayment ? formatINR(record.balancePayment) : "—"}
                   />
                   <DetailBox
                     label="Distance to Site"
@@ -554,7 +559,6 @@ export default function App() {
                   <DetailBox label="Toilet Unit" value={record.toiletUnit} />
                   <DetailBox label="Insulation" value={record.insulation} />
                   <DetailBox label="Glass Door" value={record.glassDoor} />
-                  <DetailBox label="Urinal" value={record.aluminiumWindow} />
                   <DetailBox label="False Ceiling" value={record.falseCeiling} />
                   <DetailBox label="Managerial Table" value={record.managerialTable} />
                   <DetailBox label="Conference Table" value={record.conferenceTable} />
@@ -564,12 +568,8 @@ export default function App() {
                   />
                   <DetailBox label="Epoxy Flooring" value={record.epoxyFlooring} />
                   <DetailBox
-                    label="Epoxy Flooring Amount"
-                    value={
-                      record.epoxyFlooringAmount
-                        ? formatINR(record.epoxyFlooringAmount)
-                        : "—"
-                    }
+                    label="Epoxy Flooring Cost"
+                    value={record.epoxyFlooringCost ? formatINR(record.epoxyFlooringCost) : "—"}
                   />
                 </div>
 
@@ -590,32 +590,32 @@ export default function App() {
       <div className="page-wrap">
         <section className="hero-card">
           <div className="hero-content">
-          <div>
-  <div className="hero-badge">Quotation Automation</div>
-  <h1 className="hero-title">R.K. Enterprise Quotation Automation App</h1>
-  <p className="hero-subtitle">
-    Generate container quotations and save them to Google Sheets.
-  </p>
-</div>
+            <div>
+              <div className="hero-badge">Quotation Automation</div>
+              <h1 className="hero-title">R.K. Enterprise Quotation Automation App</h1>
+              <p className="hero-subtitle">
+                Generate container quotations and save them to Google Sheets.
+              </p>
+            </div>
 
-           <div className="hero-side">
-  <div className="quote-summary">
-    <div className="summary-row">
-      <span>Quotation No.</span>
-      <strong>
-        {form.quotationNumber ? form.quotationNumber : "Shown after save"}
-      </strong>
-    </div>
-    <div className="summary-row">
-      <span>Quotation Date</span>
-      <strong>{form.quotationDate || "—"}</strong>
-    </div>
-  </div>
+            <div className="hero-side">
+              <div className="quote-summary">
+                <div className="summary-row">
+                  <span>Quotation No.</span>
+                  <strong>
+                    {form.quotationNumber ? form.quotationNumber : "Shown after save"}
+                  </strong>
+                </div>
+                <div className="summary-row">
+                  <span>Quotation Date</span>
+                  <strong>{form.quotationDate || "—"}</strong>
+                </div>
+              </div>
 
-  <button className="btn btn-secondary full-btn" onClick={() => setPage("search")}>
-    Customer Search
-  </button>
-</div>
+              <button className="btn btn-secondary full-btn" onClick={() => setPage("search")}>
+                Customer Search
+              </button>
+            </div>
           </div>
         </section>
 
@@ -627,25 +627,26 @@ export default function App() {
                 Reset
               </button>
             </div>
+
             <div className="field">
-            <label className="field-label">Product Type</label>
-            <select
-              className="input"
-              value={form.productType}
-              onChange={(e) => setForm({ ...form, productType: e.target.value })}
-            >
-              <option value="">Select Product Type</option>
-              <option value="Casa UNO">Casa UNO</option>
-              <option value="Casa DUO">Casa DUO</option>
-              <option value="Office POD">Office POD</option>
-              <option value="Security CABIN">Security CABIN</option>
-              <option value="Casa ELEVE">Casa ELEVE</option>
-              <option value="Cafe CARGO">Cafe CARGO</option>
-              <option value="Dome">Dome</option>
-              <option value="Storage Container">Storage Container</option>
-              <option value="Cargo Crash">Cargo Crash</option>
-            </select>
-          </div>
+              <label className="field-label">Product Type</label>
+              <select
+                className="input"
+                value={form.productType}
+                onChange={(e) => setForm({ ...form, productType: e.target.value })}
+              >
+                <option value="">Select Product Type</option>
+                <option value="Casa UNO">Casa UNO</option>
+                <option value="Casa DUO">Casa DUO</option>
+                <option value="Office POD">Office POD</option>
+                <option value="Security CABIN">Security CABIN</option>
+                <option value="Casa ELEVE">Casa ELEVE</option>
+                <option value="Cafe CARGO">Cafe CARGO</option>
+                <option value="Dome">Dome</option>
+                <option value="Storage Container">Storage Container</option>
+                <option value="Cargo Crash">Cargo Crash</option>
+              </select>
+            </div>
 
             <div className="form-grid two-col">
               <Field
@@ -726,12 +727,6 @@ export default function App() {
                 readOnly
               />
               <Field
-                label="Price Before GST"
-                type="number"
-                value={form.priceBeforeGst}
-                onChange={(v) => setForm({ ...form, priceBeforeGst: v })}
-              />
-              <Field
                 label="Distance to Site (km)"
                 type="number"
                 value={form.distanceToSite}
@@ -772,6 +767,18 @@ export default function App() {
                 type="number"
                 value={form.workstation}
                 onChange={(v) => setForm({ ...form, workstation: v })}
+              />
+              <Field
+                label="Price Before GST"
+                type="number"
+                value={form.priceBeforeGst}
+                onChange={(v) => setForm({ ...form, priceBeforeGst: v })}
+              />
+              <Field
+                label="Advance Payment Percentage"
+                type="number"
+                value={form.advancePaymentPercentage}
+                onChange={(v) => setForm({ ...form, advancePaymentPercentage: v })}
               />
             </div>
 
@@ -861,8 +868,8 @@ export default function App() {
                 <strong>{formatINR(form.priceBeforeGst)}</strong>
               </div>
               <div className="price-row">
-              <span>Bed Cost</span>
-              <strong>{formatINR(calculations.bedCost)}</strong>
+                <span>Bed Cost</span>
+                <strong>{formatINR(calculations.bedCost)}</strong>
               </div>
               <div className="price-row">
                 <span>Bunk Bed Cost</span>
@@ -885,11 +892,11 @@ export default function App() {
                 <span>Final Price</span>
                 <strong>{formatINR(calculations.finalPrice)}</strong>
               </div>
-              <div className="price-row total">
+              <div className="price-row">
                 <span>Advance Payment</span>
                 <strong>{formatINR(calculations.advancePaymentValue)}</strong>
               </div>
-              <div className="price-row total">
+              <div className="price-row">
                 <span>Balance Payment</span>
                 <strong>{formatINR(calculations.balancePayment)}</strong>
               </div>
