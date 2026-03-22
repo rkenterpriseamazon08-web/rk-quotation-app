@@ -574,30 +574,32 @@ export default function App() {
       <div className="page-wrap">
         <section className="hero-card">
           <div className="hero-content">
-            <div>
-              <div className="hero-badge">Quotation Automation</div>
-              <h1 className="hero-title">R.K. Enterprise Quotation System</h1>
-              <p className="hero-subtitle">
-                Generate container quotations and save them to Google Sheets.
-              </p>
-            </div>
+          <div>
+  <div className="hero-badge">Quotation Automation</div>
+  <h1 className="hero-title">R.K. Enterprise Quotation Automation App</h1>
+  <p className="hero-subtitle">
+    Generate container quotations and save them to Google Sheets.
+  </p>
+</div>
 
-            <div className="hero-side">
-              <div className="quote-summary">
-                <div className="summary-row">
-                  <span>Quotation No.</span>
-                  <strong>{form.quotationNumber || "Will be generated on save"}</strong>
-                </div>
-                <div className="summary-row">
-                  <span>Quotation Date</span>
-                  <strong>{form.quotationDate}</strong>
-                </div>
-              </div>
+           <div className="hero-side">
+  <div className="quote-summary">
+    <div className="summary-row">
+      <span>Quotation No.</span>
+      <strong>
+        {form.quotationNumber ? form.quotationNumber : "Shown after save"}
+      </strong>
+    </div>
+    <div className="summary-row">
+      <span>Quotation Date</span>
+      <strong>{form.quotationDate || "—"}</strong>
+    </div>
+  </div>
 
-              <button className="btn btn-secondary full-btn" onClick={() => setPage("search")}>
-                Customer Search
-              </button>
-            </div>
+  <button className="btn btn-secondary full-btn" onClick={() => setPage("search")}>
+    Customer Search
+  </button>
+</div>
           </div>
         </section>
 
