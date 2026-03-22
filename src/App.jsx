@@ -2,13 +2,14 @@ import React, { useMemo, useState } from "react";
 import "./App.css";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycby_DAm-gBeM3xrh4feR8fKVHnm5HzIhOTAEz05pzUXpEAld7ic0ay4l8irDzliczXHsHw/exec";
+  "https://script.google.com/macros/s/AKfycbyminn9jEoVkOQzmZPmKvqmmPgY2hJf8-nYskarR4XJ2wlUXzrJoPqbLYvhLq7j2E9R7Q/exec";
 
 const GST_PERCENT = 18;
 
 const initialForm = {
   quotationNumber: "",
   quotationDate: new Date().toISOString().split("T")[0],
+  productType: "",
   clientName: "",
   companyName: "",
   companyGST: "",
@@ -20,7 +21,6 @@ const initialForm = {
   containerLength: 40,
   containerWidth: 10,
   containerHeight: 10,
-  priceBeforeGst: 100000,
   distanceToSite: 500,
   partitions: 1,
   doors: 1,
@@ -28,6 +28,8 @@ const initialForm = {
   bed: 0,
   bunkBed: 0,
   workstation: 0,
+  priceBeforeGst: 0,
+  advancePaymentPercentage: 0,
   acProvision: true,
   toiletUnit: true,
   insulation: true,
@@ -57,6 +59,7 @@ function buildPayload(form, calculations) {
   return {
     quotationNumber: form.quotationNumber,
     quotationDate: form.quotationDate,
+    productType: form.productType,
     clientName: form.clientName,
     companyName: form.companyName,
     companyGST: form.companyGST,
@@ -93,6 +96,9 @@ function buildPayload(form, calculations) {
     epoxyFlooringCost: Math.round(calculations.epoxyFlooringCost),
     gst18Percent: Math.round(calculations.gst),
     finalPrice: Math.round(calculations.finalPrice),
+    advancePaymentPercentage: Math.round(calculations. advancePaymentPercentage),
+    advancePaymentValue: Math.round(calculations. advancePaymentValue),
+    balancePayment: Math.round(calculations. balancePayment),
   };
 }
 
@@ -205,6 +211,8 @@ export default function App() {
 
     const gst = safeNumber(form.priceBeforeGst || 0) * (GST_PERCENT / 100);
     const finalPrice = safeNumber(form.priceBeforeGst || 0) + gst;
+    const advancePaymentValue = finalPrice * advancePaymentPercentage / 100;
+    const balancePayment = finalPrice - advancePaymentValue;
 
     return {
       area,
@@ -510,6 +518,7 @@ export default function App() {
 
                 <div className="details-grid">
                   <DetailBox label="Quotation Date" value={record.quotationDate} />
+                  <DetailBox label="Product Type" value={record.productType} />
                   <DetailBox label="Client Name" value={record.clientName} />
                   <DetailBox label="Company Name" value={record.companyName} />
                   <DetailBox label="Company GST" value={record.companyGST} />
@@ -618,6 +627,25 @@ export default function App() {
                 Reset
               </button>
             </div>
+            <div className="field">
+            <label className="field-label">Product Type</label>
+            <select
+              className="input"
+              value={form.productType}
+              onChange={(e) => setForm({ ...form, productType: e.target.value })}
+            >
+              <option value="">Select Product Type</option>
+              <option value="Casa UNO">Casa UNO</option>
+              <option value="Casa DUO">Casa DUO</option>
+              <option value="Office POD">Office POD</option>
+              <option value="Security CABIN">Security CABIN</option>
+              <option value="Casa ELEVE">Casa ELEVE</option>
+              <option value="Cafe CARGO">Cafe CARGO</option>
+              <option value="Dome">Dome</option>
+              <option value="Storage Container">Storage Container</option>
+              <option value="Cargo Crash">Cargo Crash</option>
+            </select>
+          </div>
 
             <div className="form-grid two-col">
               <Field
@@ -813,6 +841,7 @@ export default function App() {
             <h2 className="preview-title">Quotation Preview</h2>
 
             <div className="preview-grid">
+              <DetailBox label="Product Type" value={form.productType || "—"} />
               <DetailBox label="Client" value={form.clientName || "—"} />
               <DetailBox label="Address" value={form.projectLocation || "—"} />
               <DetailBox label="Container Size" value={`${form.containerLength} x 10 x 10 ft`} />
@@ -855,6 +884,14 @@ export default function App() {
               <div className="price-row total">
                 <span>Final Price</span>
                 <strong>{formatINR(calculations.finalPrice)}</strong>
+              </div>
+              <div className="price-row total">
+                <span>Advance Payment</span>
+                <strong>{formatINR(calculations.advancePaymentValue)}</strong>
+              </div>
+              <div className="price-row total">
+                <span>Balance Payment</span>
+                <strong>{formatINR(calculations.balancePayment)}</strong>
               </div>
             </div>
 
