@@ -157,8 +157,7 @@ export default function App() {
   const [clientsLoaded, setClientsLoaded] = useState(false);
 
   const calculations = useMemo(() => {
-    const area =
-      safeNumber(form.containerLength) * safeNumber(form.containerWidth);
+    const area = safeNumber(form.containerLength) * safeNumber(form.containerWidth);
 
     const steelCost = area * 190;
     const sheetMetalCost = area * 231;
@@ -294,33 +293,35 @@ export default function App() {
       setSaving(false);
     }
   };
-const viewQuotationPdf = async (record) => {
-  try {
-    if (record.pdfFileUrl) {
-      window.open(record.pdfFileUrl, "_blank");
-      return;
+
+  const viewQuotationPdf = async (record) => {
+    try {
+      if (record.pdfFileUrl) {
+        window.open(record.pdfFileUrl, "_blank");
+        return;
+      }
+
+      setStatus("Generating quotation PDF...");
+
+      const response = await fetch(
+        `${APPS_SCRIPT_URL}?action=generateQuotationPdf&quotationNumber=${encodeURIComponent(
+          record.quotationNumber
+        )}`
+      );
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+
+      window.open(result.pdfUrl, "_blank");
+      setStatus("Quotation PDF opened successfully.");
+    } catch (error) {
+      setStatus(`Could not open quotation PDF. ${error.message}`);
     }
+  };
 
-    setStatus("Generating quotation PDF...");
-
-    const response = await fetch(
-      `${APPS_SCRIPT_URL}?action=generateQuotationPdf&quotationNumber=${encodeURIComponent(
-        record.quotationNumber
-      )}`
-    );
-
-    const result = await response.json();
-
-    if (!result.success) {
-      throw new Error(result.error || "Failed to generate PDF");
-    }
-
-    window.open(result.pdfUrl, "_blank");
-    setStatus("Quotation PDF opened successfully.");
-  } catch (error) {
-    setStatus(`Could not open quotation PDF. ${error.message}`);
-  }
-};
   const generateQuotationPdf = async () => {
     if (!form.quotationNumber) {
       setStatus("Please save the quotation first before generating PDF.");
@@ -374,54 +375,54 @@ const viewQuotationPdf = async (record) => {
     }
   };
 
- const fetchQuotationNumbers = async (clientName) => {
-  try {
-    setSearchStatus("Loading quotation numbers...");
+  const fetchQuotationNumbers = async (clientName) => {
+    try {
+      setSearchStatus("Loading quotation numbers...");
 
-    const response = await fetch(
-      `${APPS_SCRIPT_URL}?action=getQuotationNumbers&clientName=${encodeURIComponent(clientName)}`
-    );
-    const result = await response.json();
+      const response = await fetch(
+        `${APPS_SCRIPT_URL}?action=getQuotationNumbers&clientName=${encodeURIComponent(clientName)}`
+      );
+      const result = await response.json();
 
-    if (!result.success) {
-      throw new Error(result.error || "Failed to load quotation numbers");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to load quotation numbers");
+      }
+
+      setQuotationOptions(result.quotationNumbers || []);
+      setSearchStatus("");
+    } catch (error) {
+      setQuotationOptions([]);
+      setSearchStatus(`Could not load quotation numbers. ${error.message}`);
+    }
+  };
+
+  const handleClientChange = async (clientName) => {
+    setSearchClient(clientName);
+    setSearchQuotationNumber("");
+    setSearchResults([]);
+
+    if (clientName) {
+      await fetchQuotationNumbers(clientName);
+    } else {
+      setQuotationOptions([]);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchClient || !searchQuotationNumber) {
+      setSearchStatus("Please select client name and quotation number.");
+      return;
     }
 
-    setQuotationOptions(result.quotationNumbers || []);
-    setSearchStatus("");
-  } catch (error) {
-    setQuotationOptions([]);
-    setSearchStatus(`Could not load quotation numbers. ${error.message}`);
-  }
-};
+    try {
+      setSearchLoading(true);
+      setSearchStatus("Searching customer details...");
 
- const handleClientChange = async (clientName) => {
-  setSearchClient(clientName);
-  setSearchQuotationNumber("");
-  setSearchResults([]);
-
-  if (clientName) {
-    await fetchQuotationNumbers(clientName);
-  } else {
-    setQuotationOptions([]);
-  }
-};
-
- const handleSearch = async () => {
-  if (!searchClient || !searchQuotationNumber) {
-    setSearchStatus("Please select client name and quotation number.");
-    return;
-  }
-
-  try {
-    setSearchLoading(true);
-    setSearchStatus("Searching customer details...");
-
-    const response = await fetch(
-      `${APPS_SCRIPT_URL}?action=searchCustomer&clientName=${encodeURIComponent(
-        searchClient
-      )}&quotationNumber=${encodeURIComponent(searchQuotationNumber)}`
-    );
+      const response = await fetch(
+        `${APPS_SCRIPT_URL}?action=searchCustomer&clientName=${encodeURIComponent(
+          searchClient
+        )}&quotationNumber=${encodeURIComponent(searchQuotationNumber)}`
+      );
       const result = await response.json();
 
       if (!result.success) {
@@ -492,24 +493,24 @@ const viewQuotationPdf = async (record) => {
                 </select>
               </div>
 
-             <div className="field">
-            <label className="field-label">Quotation Number</label>
-            <select
-              className="input"
-              value={searchQuotationNumber}
-              disabled={!searchClient || !clientsLoaded}
-              onChange={(e) => setSearchQuotationNumber(e.target.value)}
-            >
-              <option value="">
-                {searchClient ? "Select quotation number" : "Select client first"}
-              </option>
-              {quotationOptions.map((quotationNumber) => (
-                <option key={quotationNumber} value={quotationNumber}>
-                  {quotationNumber}
-                </option>
-              ))}
-            </select>
-          </div>
+              <div className="field">
+                <label className="field-label">Quotation Number</label>
+                <select
+                  className="input"
+                  value={searchQuotationNumber}
+                  disabled={!searchClient || !clientsLoaded}
+                  onChange={(e) => setSearchQuotationNumber(e.target.value)}
+                >
+                  <option value="">
+                    {searchClient ? "Select quotation number" : "Select client first"}
+                  </option>
+                  {quotationOptions.map((quotationNumber) => (
+                    <option key={quotationNumber} value={quotationNumber}>
+                      {quotationNumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="field field-bottom">
                 <button
@@ -533,15 +534,17 @@ const viewQuotationPdf = async (record) => {
                     <h2 className="record-title">{record.clientName || "Customer Record"}</h2>
                     <div className="record-subtitle">{record.address || "—"}</div>
                   </div>
+
                   <div className="quote-pill">
-                  <span className="quote-pill-label">Quotation Number</span>
-                  <strong>{record.quotationNumber || "—"}</strong>
-                  <button
-                    className="btn btn-primary full-btn"
-                    onClick={() => viewQuotationPdf(record)}
-                  >
-                    View Quotation PDF
-                  </button>
+                    <span className="quote-pill-label">Quotation Number</span>
+                    <strong>{record.quotationNumber || "—"}</strong>
+                    <button
+                      className="btn btn-primary full-btn"
+                      onClick={() => viewQuotationPdf(record)}
+                    >
+                      View Quotation PDF
+                    </button>
+                  </div>
                 </div>
 
                 <div className="details-grid">
@@ -659,13 +662,13 @@ const viewQuotationPdf = async (record) => {
               </button>
             </div>
 
-           <div className="field product-type-field">
-          <label className="field-label">Product Type</label>
-          <select
-          className="input"
-          value={form.productType}
-          onChange={(e) => setForm({ ...form, productType: e.target.value })}
-          >
+            <div className="field product-type-field">
+              <label className="field-label">Product Type</label>
+              <select
+                className="input"
+                value={form.productType}
+                onChange={(e) => setForm({ ...form, productType: e.target.value })}
+              >
                 <option value="">Select Product Type</option>
                 <option value="Casa UNO">Casa UNO</option>
                 <option value="Casa DUO">Casa DUO</option>
