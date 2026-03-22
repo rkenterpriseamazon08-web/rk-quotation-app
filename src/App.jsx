@@ -25,6 +25,7 @@ const initialForm = {
   partitions: 1,
   doors: 1,
   windows: 2,
+  bed: 0,
   bunkBed: 0,
   workstation: 0,
   acProvision: true,
@@ -73,6 +74,7 @@ function buildPayload(form, calculations) {
     partitions: safeNumber(form.partitions),
     doors: safeNumber(form.doors),
     windows: safeNumber(form.windows),
+    bed: safeNumber(form.bed),
     bunkBed: safeNumber(form.bunkBed),
     workstation: safeNumber(form.workstation),
     acProvision: form.acProvision ? "Yes" : "No",
@@ -165,9 +167,10 @@ export default function App() {
     const toiletCost = form.toiletUnit ? 20000 : 0;
     const insulationCost = form.insulation ? area * 155 : 0;
     const glassDoorCost = form.glassDoor ? 12000 : 0;
-    const aluminiumWindowCost = form.aluminiumWindow ? 3500 : 0;
+    const aluminiumWindowCost = 0;
     const falseCeilingCost = form.falseCeiling ? area * 110 : 0;
 
+    const bedCost = safeNumber(form.bed || 0) * 3500;
     const bunkBedCost = safeNumber(form.bunkBed || 0) * 9000;
     const workstationCost = safeNumber(form.workstation || 0) * 4000;
     const managerialTableCost = form.managerialTable ? 7000 : 0;
@@ -191,6 +194,7 @@ export default function App() {
       glassDoorCost +
       aluminiumWindowCost +
       falseCeilingCost +
+      bedCost +
       bunkBedCost +
       workstationCost +
       managerialTableCost +
@@ -218,6 +222,7 @@ export default function App() {
       glassDoorCost,
       aluminiumWindowCost,
       falseCeilingCost,
+      bedCost,
       bunkBedCost,
       workstationCost,
       managerialTableCost,
@@ -532,6 +537,7 @@ export default function App() {
                   <DetailBox label="Partitions" value={record.partitions} />
                   <DetailBox label="Doors" value={record.doors} />
                   <DetailBox label="Windows" value={record.windows} />
+                  <DetailBox label="Bed" value={record.bed} />
                   <DetailBox label="Bunk Bed (Twin Sharing)" value={record.bunkBed} />
                   <DetailBox label="Workstation" value={record.workstation} />
                   <DetailBox label="AC Provision" value={record.acProvision} />
@@ -721,6 +727,12 @@ export default function App() {
                 onChange={(v) => setForm({ ...form, windows: v })}
               />
               <Field
+                label="Bed"
+                type="number"
+                value={form.bed}
+                onChange={(v) => setForm({ ...form, bed: v })}
+              />
+              <Field
                 label="Bunk Bed (Twin Sharing)"
                 type="number"
                 value={form.bunkBed}
@@ -757,11 +769,6 @@ export default function App() {
                 label="Glass Door"
                 checked={form.glassDoor}
                 onChange={(v) => setForm({ ...form, glassDoor: v })}
-              />
-              <ToggleField
-                label="Urinal"
-                checked={form.aluminiumWindow}
-                onChange={(v) => setForm({ ...form, aluminiumWindow: v })}
               />
               <ToggleField
                 label="False Ceiling"
@@ -822,6 +829,10 @@ export default function App() {
               <div className="price-row">
                 <span>Entered Price Before GST</span>
                 <strong>{formatINR(form.priceBeforeGst)}</strong>
+              </div>
+              <div className="price-row">
+              <span>Bed Cost</span>
+              <strong>{formatINR(calculations.bedCost)}</strong>
               </div>
               <div className="price-row">
                 <span>Bunk Bed Cost</span>
