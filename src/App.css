@@ -56,11 +56,15 @@ body {
 }
 
 .hero-title {
-  margin: 0 0 8px;
-  font-size: 32px;
-  line-height: 1.2;
+  margin: 12px 0 10px;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #111827;
+  display: block;
+  visibility: visible;
+  opacity: 1;
 }
-
 .hero-subtitle {
   margin: 0;
   color: #4b5563;
@@ -402,7 +406,15 @@ select:focus {
   }
 
   .hero-title {
-    font-size: 24px;
+  margin: 12px 0 10px;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #111827;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
   }
 
   .card,
