@@ -73,7 +73,7 @@ body {
 
 .quote-summary {
   background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 12px;
@@ -82,6 +82,7 @@ body {
 .summary-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   margin-bottom: 10px;
 }
