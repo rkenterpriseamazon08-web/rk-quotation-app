@@ -159,7 +159,9 @@ body {
   flex-direction: column;
   gap: 8px;
 }
-
+.product-type-field {
+  margin-bottom: 14px;
+}
 .field-bottom {
   align-self: end;
 }
