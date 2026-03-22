@@ -165,7 +165,7 @@ export default function App() {
     const toiletCost = form.toiletUnit ? 20000 : 0;
     const insulationCost = form.insulation ? area * 155 : 0;
     const glassDoorCost = form.glassDoor ? 12000 : 0;
-    const aluminiumWindowCost = form.aluminiumWindow ? 0 : 0;
+    const aluminiumWindowCost = form.aluminiumWindow ? 3500 : 0;
     const falseCeilingCost = form.falseCeiling ? area * 110 : 0;
 
     const bunkBedCost = safeNumber(form.bunkBed || 0) * 9000;
