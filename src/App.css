@@ -49,7 +49,7 @@ body {
   padding: 6px 12px;
   border-radius: 999px;
   background: #e0e7ff;
-  color: #3730a3;
+  color: #4f46e5;
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 12px;
@@ -65,14 +65,15 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
 .hero-subtitle {
   margin: 0;
-  color: #4b5563;
+  color: #374151;
   font-size: 15px;
 }
 
 .hero-side {
-  min-width: 280px;
+  min-width: 320px;
 }
 
 .quote-summary {
@@ -81,6 +82,16 @@ body {
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 12px;
+  color: #111827;
+}
+
+.quote-summary span {
+  color: #6b7280;
+}
+
+.quote-summary strong {
+  color: #111827;
+  font-weight: 700;
 }
 
 .summary-row {
@@ -167,7 +178,7 @@ select {
   border-radius: 12px;
   padding: 12px 14px;
   font-size: 14px;
-  background: #fff;
+  background: #ffffff;
   color: #111827;
   outline: none;
 }
@@ -340,7 +351,7 @@ select:focus {
 
 .btn-primary {
   background: #4f46e5;
-  color: white;
+  color: #ffffff;
 }
 
 .btn-primary:hover {
@@ -348,12 +359,12 @@ select:focus {
 }
 
 .btn-secondary {
-  background: #111827;
-  color: white;
+  background: #0f172a;
+  color: #ffffff;
 }
 
 .btn-secondary:hover {
-  background: #1f2937;
+  background: #1e293b;
 }
 
 .full-btn {
@@ -405,12 +416,16 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
- 
-
+  .hero-title {
+    font-size: 28px;
   }
 
   .card,
   .hero-card {
     padding: 18px;
+  }
+
+  .hero-side {
+    min-width: 100%;
   }
 }
