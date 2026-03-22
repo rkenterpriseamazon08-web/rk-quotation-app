@@ -405,16 +405,8 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
-  .hero-title {
-  margin: 12px 0 10px;
-  font-size: 42px;
-  line-height: 1.15;
-  font-weight: 800;
-  color: #111827;
-  display: block;
-  visibility: visible;
-  opacity: 1;
-}
+ 
+
   }
 
   .card,
