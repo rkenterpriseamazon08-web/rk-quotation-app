@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import "./App.css";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyminn9jEoVkOQzmZPmKvqmmPgY2hJf8-nYskarR4XJ2wlUXzrJoPqbLYvhLq7j2E9R7Q/exec";
+  "https://script.google.com/macros/s/AKfycbxCVrEYcein0eobY4oni9_JnRLdJ122Y7Vc8bqXwxdG1q4GjctLszpNPE5rGCA2kqSd2w/exec";
 
 const GST_PERCENT = 18;
 
@@ -148,9 +148,9 @@ export default function App() {
   const [pdfGenerating, setPdfGenerating] = useState(false);
 
   const [clientOptions, setClientOptions] = useState([]);
-  const [projectOptions, setProjectOptions] = useState([]);
+  const [quotationOptions, setQuotationOptions] = useState([]);
   const [searchClient, setSearchClient] = useState("");
-  const [searchProject, setSearchProject] = useState("");
+  const [searchQuotationNumber, setSearchQuotationNumber] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchStatus, setSearchStatus] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -294,7 +294,33 @@ export default function App() {
       setSaving(false);
     }
   };
+const viewQuotationPdf = async (record) => {
+  try {
+    if (record.pdfFileUrl) {
+      window.open(record.pdfFileUrl, "_blank");
+      return;
+    }
 
+    setStatus("Generating quotation PDF...");
+
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=generateQuotationPdf&quotationNumber=${encodeURIComponent(
+        record.quotationNumber
+      )}`
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to generate PDF");
+    }
+
+    window.open(result.pdfUrl, "_blank");
+    setStatus("Quotation PDF opened successfully.");
+  } catch (error) {
+    setStatus(`Could not open quotation PDF. ${error.message}`);
+  }
+};
   const generateQuotationPdf = async () => {
     if (!form.quotationNumber) {
       setStatus("Please save the quotation first before generating PDF.");
@@ -348,54 +374,54 @@ export default function App() {
     }
   };
 
-  const fetchProjects = async (clientName) => {
-    try {
-      setSearchStatus("Loading addresses...");
+ const fetchQuotationNumbers = async (clientName) => {
+  try {
+    setSearchStatus("Loading quotation numbers...");
 
-      const response = await fetch(
-        `${APPS_SCRIPT_URL}?action=getProjects&clientName=${encodeURIComponent(clientName)}`
-      );
-      const result = await response.json();
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=getQuotationNumbers&clientName=${encodeURIComponent(clientName)}`
+    );
+    const result = await response.json();
 
-      if (!result.success) {
-        throw new Error(result.error || "Failed to load addresses");
-      }
-
-      setProjectOptions(result.projects || []);
-      setSearchStatus("");
-    } catch (error) {
-      setProjectOptions([]);
-      setSearchStatus(`Could not load addresses. ${error.message}`);
-    }
-  };
-
-  const handleClientChange = async (clientName) => {
-    setSearchClient(clientName);
-    setSearchProject("");
-    setSearchResults([]);
-
-    if (clientName) {
-      await fetchProjects(clientName);
-    } else {
-      setProjectOptions([]);
-    }
-  };
-
-  const handleSearch = async () => {
-    if (!searchClient || !searchProject) {
-      setSearchStatus("Please select client name and address.");
-      return;
+    if (!result.success) {
+      throw new Error(result.error || "Failed to load quotation numbers");
     }
 
-    try {
-      setSearchLoading(true);
-      setSearchStatus("Searching customer details...");
+    setQuotationOptions(result.quotationNumbers || []);
+    setSearchStatus("");
+  } catch (error) {
+    setQuotationOptions([]);
+    setSearchStatus(`Could not load quotation numbers. ${error.message}`);
+  }
+};
 
-      const response = await fetch(
-        `${APPS_SCRIPT_URL}?action=searchCustomer&clientName=${encodeURIComponent(
-          searchClient
-        )}&projectLocation=${encodeURIComponent(searchProject)}`
-      );
+ const handleClientChange = async (clientName) => {
+  setSearchClient(clientName);
+  setSearchQuotationNumber("");
+  setSearchResults([]);
+
+  if (clientName) {
+    await fetchQuotationNumbers(clientName);
+  } else {
+    setQuotationOptions([]);
+  }
+};
+
+ const handleSearch = async () => {
+  if (!searchClient || !searchQuotationNumber) {
+    setSearchStatus("Please select client name and quotation number.");
+    return;
+  }
+
+  try {
+    setSearchLoading(true);
+    setSearchStatus("Searching customer details...");
+
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=searchCustomer&clientName=${encodeURIComponent(
+        searchClient
+      )}&quotationNumber=${encodeURIComponent(searchQuotationNumber)}`
+    );
       const result = await response.json();
 
       if (!result.success) {
@@ -466,24 +492,24 @@ export default function App() {
                 </select>
               </div>
 
-              <div className="field">
-                <label className="field-label">Address</label>
-                <select
-                  className="input"
-                  value={searchProject}
-                  disabled={!searchClient || !clientsLoaded}
-                  onChange={(e) => setSearchProject(e.target.value)}
-                >
-                  <option value="">
-                    {searchClient ? "Select address" : "Select client first"}
-                  </option>
-                  {projectOptions.map((project) => (
-                    <option key={project} value={project}>
-                      {project}
-                    </option>
-                  ))}
-                </select>
-              </div>
+             <div className="field">
+            <label className="field-label">Quotation Number</label>
+            <select
+              className="input"
+              value={searchQuotationNumber}
+              disabled={!searchClient || !clientsLoaded}
+              onChange={(e) => setSearchQuotationNumber(e.target.value)}
+            >
+              <option value="">
+                {searchClient ? "Select quotation number" : "Select client first"}
+              </option>
+              {quotationOptions.map((quotationNumber) => (
+                <option key={quotationNumber} value={quotationNumber}>
+                  {quotationNumber}
+                </option>
+              ))}
+            </select>
+          </div>
 
               <div className="field field-bottom">
                 <button
@@ -508,9 +534,14 @@ export default function App() {
                     <div className="record-subtitle">{record.address || "—"}</div>
                   </div>
                   <div className="quote-pill">
-                    <span className="quote-pill-label">Quotation Number</span>
-                    <strong>{record.quotationNumber || "—"}</strong>
-                  </div>
+                  <span className="quote-pill-label">Quotation Number</span>
+                  <strong>{record.quotationNumber || "—"}</strong>
+                  <button
+                    className="btn btn-primary full-btn"
+                    onClick={() => viewQuotationPdf(record)}
+                  >
+                    View Quotation PDF
+                  </button>
                 </div>
 
                 <div className="details-grid">
