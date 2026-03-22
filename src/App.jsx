@@ -18,10 +18,10 @@ const initialForm = {
   contactNumber: "",
   email: "",
   notes: "",
-  containerLength: 0,
+  containerLength: 10,
   containerWidth: 10,
   containerHeight: 10,
-  distanceToSite: 10,
+  distanceToSite: 0,
   partitions: 0,
   doors: 0,
   windows: 0,
@@ -808,12 +808,23 @@ export default function App() {
                 value={form.priceBeforeGst}
                 onChange={(v) => setForm({ ...form, priceBeforeGst: v })}
               />
-              <Field
-                label="Advance Payment Percentage"
-                type="number"
-                value={form.advancePaymentPercentage}
-                onChange={(v) => setForm({ ...form, advancePaymentPercentage: v })}
-              />
+              <div className="field">
+  <label className="field-label">Advance Payment Percentage</label>
+  <div className="percentage-input-wrap">
+    <input
+      className="input"
+      type="number"
+      value={form.advancePaymentPercentage}
+      onChange={(e) =>
+        setForm({
+          ...form,
+          advancePaymentPercentage: safeNumber(e.target.value),
+        })
+      }
+    />
+    <span className="percentage-symbol">%</span>
+  </div>
+</div>
             </div>
 
             <div className="divider" />
