@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import "./App.css";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyk9oTwc8eAHRsJEFx1YStCf7TLH-Ub97odrqovpLD9eNhJmy5RZYASgqEkOYxGm73vKA/exec";
+  "https://script.google.com/macros/s/AKfycbwC8NZTPvp-H16t1HaxajpeFQjgDLcNsPIw0VJZt6Ica6tlSd4G_tJ64LAPS1bapp0lZA/exec";
 
 const GST_PERCENT = 18;
 
