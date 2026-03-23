@@ -17,10 +17,12 @@ body {
   min-height: 100vh;
   padding: 24px;
   background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  overflow-x: hidden;
 }
 
 .page-wrap {
   max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -64,6 +66,7 @@ body {
   display: block;
   visibility: visible;
   opacity: 1;
+  word-break: break-word;
 }
 
 .hero-subtitle {
@@ -74,6 +77,8 @@ body {
 
 .hero-side {
   min-width: 320px;
+  width: 100%;
+  max-width: 360px;
 }
 
 .quote-summary {
@@ -92,6 +97,7 @@ body {
 .quote-summary strong {
   color: #111827;
   font-weight: 700;
+  word-break: break-word;
 }
 
 .summary-row {
@@ -100,6 +106,7 @@ body {
   align-items: center;
   gap: 12px;
   margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .summary-row:last-child {
@@ -122,12 +129,14 @@ body {
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .section-header h2,
 .preview-title {
   margin: 0;
   font-size: 24px;
+  word-break: break-word;
 }
 
 .subsection-title {
@@ -158,10 +167,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
+
 .product-type-field {
   margin-bottom: 14px;
 }
+
 .field-bottom {
   align-self: end;
 }
@@ -183,9 +195,12 @@ select {
   background: #ffffff;
   color: #111827;
   outline: none;
+  min-width: 0;
 }
+
 .percentage-input-wrap {
   position: relative;
+  width: 100%;
 }
 
 .percentage-input-wrap .input {
@@ -201,6 +216,7 @@ select {
   font-weight: 600;
   pointer-events: none;
 }
+
 .input:focus,
 .textarea:focus,
 select:focus {
@@ -231,11 +247,13 @@ select:focus {
   border-radius: 14px;
   padding: 14px 16px;
   background: #f9fafb;
+  min-width: 0;
 }
 
 .toggle-label {
   font-size: 14px;
   font-weight: 600;
+  word-break: break-word;
 }
 
 .preview-card {
@@ -257,6 +275,7 @@ select:focus {
   border-radius: 14px;
   padding: 14px;
   background: #f9fafb;
+  min-width: 0;
 }
 
 .detail-label {
@@ -279,6 +298,7 @@ select:focus {
   border-radius: 14px;
   padding: 16px;
   margin-top: 16px;
+  min-width: 0;
 }
 
 .price-card {
@@ -291,6 +311,7 @@ select:focus {
   justify-content: space-between;
   gap: 12px;
   padding: 8px 0;
+  flex-wrap: wrap;
 }
 
 .price-row.total {
@@ -313,6 +334,7 @@ select:focus {
   background: #eef2ff;
   border: 1px solid #c7d2fe;
   color: #3730a3;
+  word-break: break-word;
 }
 
 .record-header {
@@ -326,10 +348,12 @@ select:focus {
 .record-title {
   margin: 0 0 4px;
   font-size: 24px;
+  word-break: break-word;
 }
 
 .record-subtitle {
   color: #6b7280;
+  word-break: break-word;
 }
 
 .quote-pill {
@@ -339,6 +363,7 @@ select:focus {
   border-radius: 14px;
   padding: 12px 14px;
   min-width: 220px;
+  max-width: 100%;
 }
 
 .quote-pill-label {
@@ -361,6 +386,7 @@ select:focus {
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s ease;
+  max-width: 100%;
 }
 
 .btn:hover {
@@ -400,6 +426,16 @@ select:focus {
   margin: 8px 0;
 }
 
+@media (max-width: 1200px) {
+  .hero-side {
+    max-width: 320px;
+  }
+
+  .page-wrap {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 1100px) {
   .main-grid {
     grid-template-columns: 1fr;
@@ -409,8 +445,27 @@ select:focus {
     position: static;
   }
 
+  .hero-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-side {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
   .three-col,
   .search-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .preview-grid,
+  .details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toggle-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -420,9 +475,14 @@ select:focus {
     padding: 14px;
   }
 
+  .page-wrap {
+    width: 100%;
+  }
+
   .hero-content,
   .record-header {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .two-col,
@@ -438,6 +498,11 @@ select:focus {
     font-size: 28px;
   }
 
+  .hero-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
   .card,
   .hero-card {
     padding: 18px;
@@ -445,5 +510,76 @@ select:focus {
 
   .hero-side {
     min-width: 100%;
+    max-width: 100%;
+  }
+
+  .quote-pill {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .btn,
+  .full-btn {
+    width: 100%;
+  }
+
+  .section-header {
+    align-items: stretch;
+  }
+
+  .summary-row {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .hero-card,
+  .card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .hero-title {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .section-header h2,
+  .preview-title {
+    font-size: 20px;
+  }
+
+  .subsection-title {
+    font-size: 16px;
+  }
+
+  .record-title {
+    font-size: 20px;
+  }
+
+  .input,
+  .textarea,
+  select,
+  .btn {
+    font-size: 14px;
+  }
+
+  .field-label,
+  .toggle-label,
+  .detail-value {
+    font-size: 13px;
+  }
+
+  .detail-label,
+  .quote-pill-label {
+    font-size: 11px;
+  }
+
+  .price-row.total {
+    font-size: 16px;
   }
 }
