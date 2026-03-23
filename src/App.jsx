@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import "./App.css";
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxCVrEYcein0eobY4oni9_JnRLdJ122Y7Vc8bqXwxdG1q4GjctLszpNPE5rGCA2kqSd2w/exec";
+  "https://script.google.com/macros/s/AKfycbwNgTqLq1fClk326-nQqoqis8_g-iBWLBKCz8sI5j_sRtks2Ki1F-CLyVSx-wqvXVQ0Zg/exec";
 
 const GST_PERCENT = 18;
 
@@ -20,16 +20,16 @@ const initialForm = {
   notes: "",
   containerLength: 10,
   containerWidth: 10,
-  containerHeight: 10,
-  distanceToSite: 0,
-  partitions: 0,
-  doors: 0,
-  windows: 0,
-  bed: 0,
-  bunkBed: 0,
-  workstation: 0,
-  priceBeforeGst: 0,
-  advancePaymentPercentage: 0,
+  containerHeight: 9,
+  distanceToSite: "",
+  partitions: "",
+  doors: "",
+  windows: "",
+  bed: "",
+  bunkBed: "",
+  workstation: "",
+  priceBeforeGst: "",
+  advancePaymentPercentage: "",
   acProvision: false,
   toiletUnit: false,
   insulation: false,
@@ -111,7 +111,13 @@ function Field({ label, value, onChange, type = "text", readOnly = false }) {
         value={value}
         readOnly={readOnly}
         onChange={(e) =>
-          onChange(type === "number" ? safeNumber(e.target.value) : e.target.value)
+          onChange(
+            type === "number"
+              ? e.target.value === ""
+                ? ""
+                : safeNumber(e.target.value)
+              : e.target.value
+          )
         }
       />
     </div>
@@ -808,23 +814,24 @@ export default function App() {
                 value={form.priceBeforeGst}
                 onChange={(v) => setForm({ ...form, priceBeforeGst: v })}
               />
-              <div className="field">
-  <label className="field-label">Advance Payment Percentage</label>
-  <div className="percentage-input-wrap">
-    <input
-      className="input"
-      type="number"
-      value={form.advancePaymentPercentage}
-      onChange={(e) =>
-        setForm({
-          ...form,
-          advancePaymentPercentage: safeNumber(e.target.value),
-        })
-      }
-    />
-    <span className="percentage-symbol">%</span>
-  </div>
-</div>
+             <div className="field">
+              <label className="field-label">Advance Payment Percentage</label>
+              <div className="percentage-input-wrap">
+                <input
+                  className="input"
+                  type="number"
+                  value={form.advancePaymentPercentage}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      advancePaymentPercentage:
+                        e.target.value === "" ? "" : safeNumber(e.target.value),
+                    })
+                  }
+                />
+                <span className="percentage-symbol">%</span>
+              </div>
+            </div>
             </div>
 
             <div className="divider" />
