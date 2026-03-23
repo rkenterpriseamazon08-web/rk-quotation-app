@@ -762,7 +762,7 @@ export default function App() {
               <Field
                 label="Container Height (ft)"
                 type="number"
-                value={10}
+                value={9}
                 onChange={() => {}}
                 readOnly
               />
@@ -903,7 +903,7 @@ export default function App() {
               <DetailBox label="Product Type" value={form.productType || "—"} />
               <DetailBox label="Client" value={form.clientName || "—"} />
               <DetailBox label="Address" value={form.projectLocation || "—"} />
-              <DetailBox label="Container Size" value={`${form.containerLength} x 10 x 10 ft`} />
+              <DetailBox label="Container Size" value={`${form.containerLength} x 10 x 9 ft`} />
               <DetailBox label="Floor Area" value={`${calculations.area} sqft`} />
               <DetailBox label="Calculated Cost" value={formatINR(calculations.calculatedCost)} />
               <DetailBox label="GST" value={formatINR(calculations.gst)} />
